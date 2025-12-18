@@ -1,0 +1,23 @@
+{
+  "appId": "com.example.app5345",
+  "appName": "奥力给",
+  "webDir": "web/dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": "release.keystore",
+      "keystorePassword": "123456",
+      "keystoreAlias": "release-key",
+      "keystoreAliasPassword": "123456"
+    }
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#ffffff"
+    }
+  }
+}

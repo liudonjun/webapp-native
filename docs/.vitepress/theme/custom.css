@@ -1,0 +1,72 @@
+/**
+ * VitePress 自定义样式
+ */
+
+:root {
+  --vp-c-brand: #646cff;
+  --vp-c-brand-light: #747bff;
+  --vp-c-brand-lighter: #9499ff;
+  --vp-c-brand-dark: #535bf2;
+  --vp-c-brand-darker: #454ce1;
+  
+  --vp-c-sponsor: #fd1d7c;
+}
+
+/* 自定义代码块样式 */
+.vp-code-group {
+  margin: 16px 0;
+}
+
+/* 自定义提示框样式 */
+.custom-block {
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.custom-block.tip {
+  background-color: rgba(100, 108, 255, 0.1);
+  border-left: 4px solid var(--vp-c-brand);
+}
+
+.custom-block.warning {
+  background-color: rgba(255, 193, 7, 0.1);
+  border-left: 4px solid #ffc107;
+}
+
+.custom-block.danger {
+  background-color: rgba(244, 67, 54, 0.1);
+  border-left: 4px solid #f44336;
+}
+
+/* 表格样式优化 */
+.vp-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.vp-table th,
+.vp-table td {
+  border: 1px solid var(--vp-c-divider);
+  padding: 12px;
+  text-align: left;
+}
+
+.vp-table th {
+  background-color: var(--vp-c-bg-soft);
+  font-weight: 600;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  .vp-table {
+    font-size: 14px;
+  }
+  
+  .vp-table th,
+  .vp-table td {
+    padding: 8px;
+  }
+}
+

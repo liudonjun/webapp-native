@@ -1,0 +1,20 @@
+# Test coverage reports
+coverage/
+.nyc_output/
+*.lcov
+
+# Test snapshots (optional - uncomment if you want to ignore snapshots)
+# __snapshots__/
+
+# Jest cache
+.jest-cache/
+
+# Test results
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Temporary test files
+*.test.tmp
+*.spec.tmp
+
