@@ -26,6 +26,21 @@
       -webkit-touch-callout: none;
       -webkit-user-select: none;
       user-select: none;
+      /* 暗黑模式过渡动画 */
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* 暗黑模式样式 - 配合 Vant ConfigProvider */
+    html.dark-mode body,
+    .van-theme-dark body {
+      background: #1a1a1a;
+      color: #f5f5f5;
+    }
+
+    html.dark-mode,
+    .van-theme-dark {
+      background: #1a1a1a;
+      color: #f5f5f5;
     }
 
     #app {

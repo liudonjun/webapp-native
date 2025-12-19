@@ -3,11 +3,7 @@
   <van-tabbar v-model="active" fixed placeholder @change="handleTabChange">
     <van-tabbar-item icon="home-o" to="/">首页</van-tabbar-item>
     <van-tabbar-item icon="apps-o" to="/category">分类</van-tabbar-item>
-    <van-tabbar-item
-      icon="shopping-cart-o"
-      to="/cart"
-      :badge="cartStore.totalCount > 0 ? cartStore.totalCount : ''"
-    >
+    <van-tabbar-item icon="shopping-cart-o" to="/cart" :badge="cartStore.totalCount > 0 ? cartStore.totalCount : ''">
       购物车
     </van-tabbar-item>
     <van-tabbar-item icon="user-o" to="/profile">我的</van-tabbar-item>
@@ -43,5 +39,8 @@ function handleTabChange(index) {
 </script>
 
 <style scoped>
-/* Vant Tabbar 自带样式，无需额外样式 */
+/* 底部导航栏适配安全区域 */
+:deep(.van-tabbar) {
+  padding-bottom: env(safe-area-inset-bottom);
+}
 </style>

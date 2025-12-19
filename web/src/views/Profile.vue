@@ -6,21 +6,10 @@
     <div class="page-content">
       <!-- 用户信息卡片 -->
       <van-cell-group inset>
-        <van-cell
-          :title="userStore.displayName"
-          :label="userStore.isLoggedIn ? '已登录' : '未登录'"
-          :icon="userStore.isLoggedIn ? 'user-circle-o' : 'contact'"
-          is-link
-          @click="handleUserInfo"
-        >
+        <van-cell :title="userStore.displayName" :label="userStore.isLoggedIn ? '已登录' : '未登录'"
+          :icon="userStore.isLoggedIn ? 'user-circle-o' : 'contact'" is-link @click="handleUserInfo">
           <template #right-icon>
-            <van-image
-              v-if="userStore.userInfo.avatar"
-              :src="userStore.userInfo.avatar"
-              round
-              width="40"
-              height="40"
-            />
+            <van-image v-if="userStore.userInfo.avatar" :src="userStore.userInfo.avatar" round width="40" height="40" />
             <van-icon v-else name="contact" size="40" />
           </template>
         </van-cell>
@@ -28,32 +17,25 @@
 
       <!-- 功能菜单 -->
       <van-cell-group title="我的服务" inset style="margin-top: 16px;">
-        <van-cell
-          v-for="(item, index) in menuItems"
-          :key="index"
-          :title="item.text"
-          :icon="item.icon"
-          is-link
-          @click="handleMenuClick(item)"
-        />
+        <van-cell v-for="(item, index) in menuItems" :key="index" :title="item.text" :icon="item.icon" is-link
+          @click="handleMenuClick(item)" />
+      </van-cell-group>
+
+      <!-- 主题设置 -->
+      <van-cell-group title="主题设置" inset style="margin-top: 16px;">
+        <van-cell title="暗黑模式" :icon="themeStore.isDarkMode ? 'eye-o' : 'eye'">
+          <template #right-icon>
+            <van-switch :model-value="themeStore.isDarkMode" @change="handleThemeChange" />
+          </template>
+        </van-cell>
       </van-cell-group>
 
       <!-- 操作按钮 -->
       <div style="padding: 16px;">
-        <van-button
-          v-if="userStore.isLoggedIn"
-          type="danger"
-          block
-          @click="handleLogout"
-        >
+        <van-button v-if="userStore.isLoggedIn" type="danger" block @click="handleLogout">
           退出登录
         </van-button>
-        <van-button
-          v-else
-          type="primary"
-          block
-          @click="handleLogin"
-        >
+        <van-button v-else type="primary" block @click="handleLogin">
           登录
         </van-button>
       </div>
@@ -65,8 +47,10 @@
 import { ref } from 'vue';
 import { showToast, showSuccessToast, showDialog } from 'vant';
 import { useUserStore } from '@/stores/user';
+import { useThemeStore } from '@/stores/theme';
 
 const userStore = useUserStore();
+const themeStore = useThemeStore();
 
 const menuItems = ref([
   { icon: 'orders-o', text: '我的订单', path: '/orders' },
@@ -116,6 +100,22 @@ async function handleLogout() {
     // 用户取消
   }
 }
+
+function handleThemeChange(value) {
+  console.log('Theme change triggered:', value);
+  themeStore.setDarkMode(value);
+  console.log('Theme store isDarkMode:', themeStore.isDarkMode);
+  console.log('ConfigProvider should update to:', value ? 'dark' : 'light');
+
+  // 验证 DOM 更新
+  setTimeout(() => {
+    const configProvider = document.querySelector('.van-config-provider');
+    if (configProvider) {
+      console.log('ConfigProvider classes:', configProvider.className);
+      console.log('ConfigProvider theme attribute:', configProvider.getAttribute('data-theme'));
+    }
+  }, 100);
+}
 </script>
 
 <style scoped>
@@ -123,6 +123,17 @@ async function handleLogout() {
   min-height: 100vh;
   background: #f7f8fa;
   padding-bottom: 60px;
+  transition: background-color 0.3s ease;
+}
+
+/* 暗黑模式样式 */
+html.dark-mode .profile-page {
+  background: #1a1a1a;
+}
+
+/* 顶部导航栏适配安全区域 */
+:deep(.van-nav-bar) {
+  padding-top: env(safe-area-inset-top);
 }
 
 .page-content {

@@ -3,13 +3,7 @@
     <!-- 使用Vant NavBar -->
     <van-nav-bar title="购物车" fixed placeholder>
       <template #right>
-        <van-button
-          v-if="!cartStore.isEmpty"
-          size="mini"
-          type="danger"
-          plain
-          @click="handleClearCart"
-        >
+        <van-button v-if="!cartStore.isEmpty" size="mini" type="danger" plain @click="handleClearCart">
           清空
         </van-button>
       </template>
@@ -17,46 +11,25 @@
 
     <div class="page-content">
       <!-- 空购物车 -->
-      <van-empty
-        v-if="cartStore.isEmpty"
-        description="购物车是空的"
-        image="https://fastly.jsdelivr.net/npm/@vant/assets/custom-empty-image.png"
-      >
+      <van-empty v-if="cartStore.isEmpty" description="购物车是空的"
+        image="https://fastly.jsdelivr.net/npm/@vant/assets/custom-empty-image.png">
         <van-button type="primary" @click="goToHome">去逛逛</van-button>
       </van-empty>
 
       <!-- 购物车商品列表 -->
-      <van-card
-        v-for="item in cartStore.items"
-        :key="item.id"
-        :num="item.quantity"
-        :price="item.price.toFixed(2)"
-        :title="item.title"
-        :thumb="item.image"
-      >
+      <van-card v-for="item in cartStore.items" :key="item.id" :num="item.quantity" :price="item.price.toFixed(2)"
+        :title="item.title" :thumb="item.image">
         <template #footer>
-          <van-stepper
-            v-model="item.quantity"
-            @change="(value) => handleQuantityChange(item.id, value)"
-          />
-          <van-button
-            size="mini"
-            type="danger"
-            style="margin-left: 8px;"
-            @click="handleRemoveItem(item.id)"
-          >
+          <van-stepper v-model="item.quantity" @change="(value) => handleQuantityChange(item.id, value)" />
+          <van-button size="mini" type="danger" style="margin-left: 8px;" @click="handleRemoveItem(item.id)">
             删除
           </van-button>
         </template>
       </van-card>
 
       <!-- 购物车结算栏 -->
-      <van-submit-bar
-        v-if="!cartStore.isEmpty"
-        :price="cartStore.totalPrice * 100"
-        button-text="结算"
-        @submit="handleCheckout"
-      >
+      <van-submit-bar v-if="!cartStore.isEmpty" :price="cartStore.totalPrice * 100" button-text="结算"
+        @submit="handleCheckout">
         <template #tip>
           共 {{ cartStore.totalCount }} 件商品
         </template>
@@ -112,6 +85,17 @@ function handleCheckout() {
   min-height: 100vh;
   background: #f7f8fa;
   padding-bottom: 100px;
+  transition: background-color 0.3s ease;
+}
+
+/* 暗黑模式样式 */
+html.dark-mode .cart-page {
+  background: #1a1a1a;
+}
+
+/* 顶部导航栏适配安全区域 */
+:deep(.van-nav-bar) {
+  padding-top: env(safe-area-inset-top);
 }
 
 .page-content {

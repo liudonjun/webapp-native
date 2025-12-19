@@ -6,26 +6,14 @@
     <div class="page-content">
       <!-- 使用Vant Grid -->
       <van-grid :column-num="4" :gutter="10">
-        <van-grid-item
-          v-for="(category, index) in categories"
-          :key="index"
-          :icon="category.icon"
-          :text="category.name"
-          @click="handleCategoryClick(category)"
-        />
+        <van-grid-item v-for="(category, index) in categories" :key="index" :icon="category.icon" :text="category.name"
+          @click="handleCategoryClick(category)" />
       </van-grid>
 
       <!-- 分类商品列表 -->
       <van-cell-group title="热门分类" inset style="margin-top: 16px;">
-        <van-cell
-          v-for="(item, index) in categoryList"
-          :key="index"
-          :title="item.name"
-          :label="item.desc"
-          :value="item.count + '件商品'"
-          is-link
-          @click="handleCategorySelect(item)"
-        />
+        <van-cell v-for="(item, index) in categoryList" :key="index" :title="item.name" :label="item.desc"
+          :value="item.count + '件商品'" is-link @click="handleCategorySelect(item)" />
       </van-cell-group>
     </div>
   </div>
@@ -67,6 +55,17 @@ function handleCategorySelect(item) {
   min-height: 100vh;
   background: #f7f8fa;
   padding-bottom: 60px;
+  transition: background-color 0.3s ease;
+}
+
+/* 暗黑模式样式 */
+html.dark-mode .category-page {
+  background: #1a1a1a;
+}
+
+/* 顶部导航栏适配安全区域 */
+:deep(.van-nav-bar) {
+  padding-top: env(safe-area-inset-top);
 }
 
 .page-content {

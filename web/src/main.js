@@ -70,4 +70,9 @@ app.use(router);
 // 挂载应用
 app.mount('#app');
 
+// 初始化主题（在应用挂载后立即初始化，确保DOM已准备好）
+import { useThemeStore } from './stores/theme';
+const themeStore = useThemeStore();
+themeStore.initTheme();
+
 console.log('Vue App initialized');
