@@ -1,6 +1,6 @@
 {
   "appId": "com.demo.eweqew",
-  "appName": "My App",
+  "appName": "webapp",
   "webDir": "web/dist",
   "bundledWebRuntime": false,
   "server": {
