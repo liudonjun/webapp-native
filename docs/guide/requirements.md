@@ -43,6 +43,18 @@ description: 项目运行所需的环境配置
 - Windows: `C:\Program Files\Android\Android Studio\jbr`
 - macOS: `/Applications/Android Studio.app/Contents/jbr`
 
+### iOS开发环境（仅macOS）
+
+- **系统要求**: macOS 10.15+ (推荐 macOS 12+)
+- **Xcode**: 通过 [App Store](https://apps.apple.com/app/xcode/id497799835) 安装
+- **版本要求**: Xcode 13+ (推荐 Xcode 14+)
+- **Command Line Tools**: 安装Xcode后自动安装，或运行 `xcode-select --install`
+- **CocoaPods**: iOS依赖管理工具
+  - 安装: `sudo gem install cocoapods`
+  - 验证: `pod --version`
+
+**注意**: iOS构建只能在macOS系统上运行
+
 ## 环境配置
 
 ### Windows
@@ -131,6 +143,8 @@ npm run create:env
 - 检测 Java SDK 路径
 - 生成 `.env` 配置文件
 
+**注意**: iOS环境检测需要在macOS系统上运行
+
 ## 常见问题
 
 ### Q: Android SDK 未找到？
@@ -150,4 +164,17 @@ A:
 ### Q: 如何确认环境配置正确？
 
 A: 运行 `npm run create:env`，脚本会自动检测并显示检测到的路径。
+
+### Q: iOS构建需要什么环境？
+
+A: 
+1. **macOS系统**（iOS构建只能在macOS上运行）
+2. **Xcode**（从App Store安装）
+3. **CocoaPods**（运行 `sudo gem install cocoapods`）
+4. 运行 `xcodebuild -version` 验证Xcode安装
+5. 运行 `pod --version` 验证CocoaPods安装
+
+### Q: 可以在Windows/Linux上构建iOS应用吗？
+
+A: 不可以。iOS应用只能在macOS系统上构建，因为需要Xcode和iOS SDK。
 

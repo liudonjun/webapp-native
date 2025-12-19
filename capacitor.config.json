@@ -1,6 +1,6 @@
 {
-  "appId": "com.example.app5345",
-  "appName": "奥力给",
+  "appId": "com.example.app",
+  "appName": "My App",
   "webDir": "web/dist",
   "bundledWebRuntime": false,
   "server": {

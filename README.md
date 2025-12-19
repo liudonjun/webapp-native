@@ -24,7 +24,7 @@
 
 ## ✨ 功能特性
 
-- ✅ **跨平台支持**：支持 Android 和 iOS（iOS支持开发中）
+- ✅ **跨平台支持**：支持 Android 和 iOS
 - ✅ **多框架支持**：自动检测并支持 React、Vue、Angular、Vanilla JS
 - ✅ **完整构建流程**：Web构建 → Capacitor同步 → 原生应用编译，一键完成
 - ✅ **双模式构建**：支持 Debug 和 Release 版本

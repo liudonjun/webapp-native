@@ -3,9 +3,10 @@
 /**
  * Capacitor同步脚本
  * 功能：
- * 1. 调用 npx cap sync
+ * 1. 调用 npx cap sync（支持Android和iOS）
  * 2. 验证同步结果
  * 3. 处理同步错误
+ * 4. 更新平台配置
  */
 
 // 加载环境变量
@@ -64,6 +65,9 @@ function updateCapacitorConfig() {
     
     // 更新Android应用名称
     updateAndroidAppName();
+    
+    // 更新iOS应用名称
+    updateIOSAppName();
   } catch (error) {
     throw new Error(`更新Capacitor配置失败: ${error.message}`);
   }
@@ -161,34 +165,102 @@ function ensureDefaultConfig() {
   }
 }
 
+// 更新iOS应用名称（Info.plist）
+function updateIOSAppName() {
+  const iosDir = path.join(__dirname, '..', 'ios');
+  const infoPlistPath = path.join(iosDir, 'App', 'App', 'Info.plist');
+  
+  if (!fs.existsSync(infoPlistPath)) {
+    console.warn('⚠️  无法找到Info.plist，跳过iOS应用名称更新');
+    return;
+  }
+  
+  try {
+    let infoPlistContent = fs.readFileSync(infoPlistPath, 'utf8');
+    
+    // 更新应用名称（CFBundleDisplayName）
+    if (infoPlistContent.includes('<key>CFBundleDisplayName</key>')) {
+      infoPlistContent = infoPlistContent.replace(
+        /<key>CFBundleDisplayName<\/key>\s*<string>[^<]+<\/string>/,
+        `<key>CFBundleDisplayName</key>\n\t<string>${config.appName}</string>`
+      );
+    } else {
+      // 如果不存在，在CFBundleName之后添加
+      infoPlistContent = infoPlistContent.replace(
+        /(<key>CFBundleName<\/key>\s*<string>[^<]+<\/string>)/,
+        `$1\n\t<key>CFBundleDisplayName</key>\n\t<string>${config.appName}</string>`
+      );
+    }
+    
+    // 更新Bundle Identifier（CFBundleIdentifier）
+    if (config.appId && infoPlistContent.includes('<key>CFBundleIdentifier</key>')) {
+      infoPlistContent = infoPlistContent.replace(
+        /<key>CFBundleIdentifier<\/key>\s*<string>[^<]+<\/string>/,
+        `<key>CFBundleIdentifier</key>\n\t<string>${config.appId}</string>`
+      );
+    }
+    
+    fs.writeFileSync(infoPlistPath, infoPlistContent);
+    console.log(`✅ iOS应用名称已更新: ${config.appName}`);
+  } catch (error) {
+    console.warn(`⚠️  更新iOS应用名称失败: ${error.message}`);
+  }
+}
+
 // 执行Capacitor同步
 function syncCapacitor() {
   const projectRoot = path.join(__dirname, '..');
   
-  // 检查Android目录是否存在
+  // 检查平台目录是否存在
   const androidDir = path.join(projectRoot, 'android');
-  if (!fs.existsSync(androidDir)) {
-    throw new Error('Android目录不存在，请先运行 npm run init');
+  const iosDir = path.join(projectRoot, 'ios');
+  
+  const platforms = [];
+  if (fs.existsSync(androidDir)) {
+    platforms.push('android');
+  }
+  if (fs.existsSync(iosDir)) {
+    platforms.push('ios');
   }
   
-  console.log('🔄 执行 Capacitor 同步...');
+  if (platforms.length === 0) {
+    throw new Error('未找到任何平台目录，请先运行 npm run init');
+  }
+  
+  console.log(`🔄 执行 Capacitor 同步 (${platforms.join(', ')})...`);
   
   try {
-    execSync('npx cap sync android', {
-      stdio: 'inherit',
-      cwd: projectRoot
-    });
+    // 同步所有平台
+    for (const platform of platforms) {
+      console.log(`\n📱 同步 ${platform} 平台...`);
+      execSync(`npx cap sync ${platform}`, {
+        stdio: 'inherit',
+        cwd: projectRoot
+      });
+      console.log(`✅ ${platform} 平台同步完成`);
+    }
     
-    console.log('✅ Capacitor同步完成');
+    console.log('\n✅ Capacitor同步完成');
     
     // 同步后立即确保 defaultConfig 块存在（Capacitor sync 可能会覆盖 build.gradle）
-    ensureDefaultConfig();
+    if (fs.existsSync(androidDir)) {
+      ensureDefaultConfig();
+      
+      // 验证Android同步结果
+      const androidAssetsDir = path.join(androidDir, 'app', 'src', 'main', 'assets', 'public');
+      if (fs.existsSync(androidAssetsDir)) {
+        const files = fs.readdirSync(androidAssetsDir);
+        console.log(`✅ 验证同步结果: Android assets目录中有 ${files.length} 个文件`);
+      }
+    }
     
-    // 验证同步结果
-    const androidAssetsDir = path.join(androidDir, 'app', 'src', 'main', 'assets', 'public');
-    if (fs.existsSync(androidAssetsDir)) {
-      const files = fs.readdirSync(androidAssetsDir);
-      console.log(`✅ 验证同步结果: Android assets目录中有 ${files.length} 个文件`);
+    // 验证iOS同步结果
+    if (fs.existsSync(iosDir)) {
+      const iosAssetsDir = path.join(iosDir, 'App', 'App', 'public');
+      if (fs.existsSync(iosAssetsDir)) {
+        const files = fs.readdirSync(iosAssetsDir);
+        console.log(`✅ 验证同步结果: iOS public目录中有 ${files.length} 个文件`);
+      }
     }
     
   } catch (error) {

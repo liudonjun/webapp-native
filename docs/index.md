@@ -39,7 +39,7 @@ features:
 
 ## 功能特性
 
-- ✅ **跨平台支持**：支持 Android 和 iOS（iOS支持开发中）
+- ✅ **跨平台支持**：支持 Android 和 iOS
 - ✅ **多框架支持**：自动检测并支持 React、Vue、Angular、Vanilla JS
 - ✅ **完整构建流程**：Web构建 → Capacitor同步 → 原生应用编译，一键完成
 - ✅ **双模式构建**：支持 Debug 和 Release 版本
@@ -62,7 +62,7 @@ npm run init
 # 4. 构建Android应用
 npm run build:android
 
-# 5. 构建iOS应用（开发中）
+# 5. 构建iOS应用（需要macOS和Xcode）
 npm run build:ios
 ```
 

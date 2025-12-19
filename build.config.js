@@ -46,6 +46,11 @@ module.exports = {
     buildToolsVersion: getEnv('ANDROID_BUILD_TOOLS_VERSION', '34.0.0'),
   },
   
+  // iOS配置（可从环境变量读取）
+  ios: {
+    deploymentTarget: getEnv('IOS_DEPLOYMENT_TARGET', '13.0'), // 最低支持的iOS版本
+  },
+  
   // 签名配置（Release版本，可从环境变量读取）
   signing: {
     enabled: getEnvBool('SIGNING_ENABLED', false),

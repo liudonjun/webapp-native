@@ -5,7 +5,7 @@
  * 功能：
  * 1. 检测前端框架类型（React/Vue/Angular/Vanilla）
  * 2. 初始化Capacitor配置
- * 3. 创建Android项目结构
+ * 3. 创建Android和iOS项目结构
  * 4. 配置构建环境
  */
 
@@ -89,6 +89,25 @@ function initCapacitor() {
       });
     } else {
       console.log('✅ Android平台已存在');
+    }
+    
+    // 添加iOS平台
+    if (!fs.existsSync(path.join(__dirname, '..', 'ios'))) {
+      console.log('🍎 添加iOS平台...');
+      try {
+        execSync('npx cap add ios', { 
+          stdio: 'inherit',
+          cwd: path.join(__dirname, '..')
+        });
+      } catch (error) {
+        console.warn('⚠️  iOS平台添加失败（可能需要在macOS上运行）:', error.message);
+        console.warn('   如果需要在iOS上构建，请确保：');
+        console.warn('   1. 在macOS系统上运行');
+        console.warn('   2. 已安装Xcode');
+        console.warn('   3. 已安装CocoaPods: sudo gem install cocoapods');
+      }
+    } else {
+      console.log('✅ iOS平台已存在');
     }
     
     console.log('✅ Capacitor初始化完成');
@@ -202,7 +221,8 @@ function main() {
   console.log('\n✅ 项目初始化完成！');
   console.log('\n下一步：');
   console.log('1. 在 web/ 目录下开发你的H5项目');
-  console.log('2. 运行 npm run build:apk 构建APK');
+  console.log('2. 运行 npm run build:apk 构建Android APK');
+  console.log('3. 运行 npm run build:ipa 构建iOS IPA（需要macOS和Xcode）');
 }
 
 main();

@@ -9,6 +9,8 @@
     "sync": "node scripts/sync-capacitor.js",
     "build:android": "node scripts/build-apk.js",
     "build:apk": "npm run build:web && npm run sync && npm run build:android",
+    "build:ios": "node scripts/build-ios.js",
+    "build:ipa": "npm run build:web && npm run sync && npm run build:ios",
     "generate:keystore": "node scripts/generate-keystore.js",
     "create:env": "node scripts/create-env.js",
     "create:env:example": "node scripts/create-env-example.js",
@@ -42,7 +44,8 @@
   },
   "dependencies": {
     "@capacitor/core": "^5.5.1",
-    "@capacitor/android": "^5.5.1"
+    "@capacitor/android": "^5.5.1",
+    "@capacitor/ios": "^5.5.1"
   }
 }
 
