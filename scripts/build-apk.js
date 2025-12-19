@@ -112,14 +112,60 @@ function checkAndroidSDK() {
     let javaHome = process.env.JAVA_HOME;
     let javaFound = false;
     
-    // 如果JAVA_HOME未设置，尝试查找Android Studio自带的JDK
+    // 验证JAVA_HOME路径是否存在
+    if (javaHome) {
+      const javaExe = path.join(javaHome, 'bin', os.platform() === 'win32' ? 'java.exe' : 'java');
+      if (!fs.existsSync(javaExe)) {
+        console.warn(`⚠️  JAVA_HOME路径无效: ${javaHome}`);
+        console.warn('   尝试自动检测Java环境...');
+        javaHome = null; // 重置，让脚本自动检测
+      }
+    }
+    
+    // 如果JAVA_HOME未设置或无效，尝试自动检测
     if (!javaHome) {
-      const possibleJavaPaths = [
-        'C:\\Program Files\\Android\\Android Studio\\jbr',
-        'C:\\Program Files (x86)\\Android\\Android Studio\\jbr',
-        path.join(os.homedir(), 'AppData', 'Local', 'Android', 'Sdk', 'jbr'),
-      ];
+      const possibleJavaPaths = [];
       
+      // macOS: 使用 /usr/libexec/java_home 命令检测
+      if (os.platform() === 'darwin') {
+        try {
+          const detectedJavaHome = execSync('/usr/libexec/java_home', {
+            stdio: 'pipe',
+            encoding: 'utf8'
+          }).trim();
+          if (detectedJavaHome && fs.existsSync(detectedJavaHome)) {
+            possibleJavaPaths.push(detectedJavaHome);
+          }
+        } catch (error) {
+          // /usr/libexec/java_home 不可用，继续尝试其他路径
+        }
+        
+        // macOS: Android Studio 自带的 JDK
+        possibleJavaPaths.push(
+          '/Applications/Android Studio.app/Contents/jbr',
+          path.join(os.homedir(), 'Library', 'Android', 'sdk', 'jbr')
+        );
+      }
+      
+      // Windows: Android Studio 自带的 JDK
+      if (os.platform() === 'win32') {
+        possibleJavaPaths.push(
+          'C:\\Program Files\\Android\\Android Studio\\jbr',
+          'C:\\Program Files (x86)\\Android\\Android Studio\\jbr',
+          path.join(os.homedir(), 'AppData', 'Local', 'Android', 'Sdk', 'jbr')
+        );
+      }
+      
+      // Linux: 常见 JDK 路径
+      if (os.platform() === 'linux') {
+        possibleJavaPaths.push(
+          '/usr/lib/jvm/java-17-openjdk',
+          '/usr/lib/jvm/java-11-openjdk',
+          '/usr/lib/jvm/default-java'
+        );
+      }
+      
+      // 遍历可能的路径
       for (const javaPath of possibleJavaPaths) {
         const javaExe = path.join(javaPath, 'bin', os.platform() === 'win32' ? 'java.exe' : 'java');
         if (fs.existsSync(javaExe)) {
@@ -411,6 +457,26 @@ function buildAPK() {
   console.log(`🔨 执行Gradle构建 (${buildType})...`);
   console.log(`   平台: ${os.platform()}`);
   console.log(`   Gradle命令: ${gradleCmd}`);
+  
+  // 检查并修复 gradlew 执行权限（macOS/Linux）
+  if (os.platform() !== 'win32' && gradleCmd === './gradlew') {
+    const gradlewPath = path.join(androidDir, 'gradlew');
+    if (fs.existsSync(gradlewPath)) {
+      try {
+        const stats = fs.statSync(gradlewPath);
+        // 检查是否有执行权限（检查 owner execute bit）
+        const mode = stats.mode;
+        const executeBit = 0o111; // 执行权限位
+        if ((mode & executeBit) === 0) {
+          console.log('🔧 检测到 gradlew 缺少执行权限，正在修复...');
+          fs.chmodSync(gradlewPath, '755'); // 添加执行权限: rwxr-xr-x
+          console.log('✅ 已修复 gradlew 执行权限');
+        }
+      } catch (error) {
+        console.warn(`⚠️  无法检查 gradlew 权限: ${error.message}`);
+      }
+    }
+  }
   
   try {
     // 清理之前的构建
