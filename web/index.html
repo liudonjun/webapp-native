@@ -46,11 +46,114 @@
     #app {
       min-height: 100vh;
     }
+
+    /* Loading/Splash Screen 样式 - 防止首屏闪屏 */
+    #app-loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    /* 暗黑模式下的loading背景 */
+    html.dark-mode #app-loading {
+      background: #1a1a1a;
+    }
+
+    /* Loading隐藏状态 */
+    #app-loading.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* Loading动画 */
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      border-top-color: #1989fa;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    html.dark-mode .loading-spinner {
+      border-color: rgba(255, 255, 255, 0.1);
+      border-top-color: #1989fa;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-text {
+      margin-top: 16px;
+      font-size: 14px;
+      color: #666;
+      opacity: 0.8;
+    }
+
+    html.dark-mode .loading-text {
+      color: #999;
+    }
   </style>
+  <script>
+    /**
+     * 提前初始化主题 - 防止主题切换闪烁
+     * 在Vue应用加载前就应用主题，避免从默认主题切换到用户设置的主题时出现闪烁
+     * 这个脚本必须在<head>中执行，确保在页面渲染前就应用主题
+     */
+    (function () {
+      try {
+        // 读取保存的主题设置
+        const savedTheme = localStorage.getItem('theme');
+        let isDark = false;
+
+        if (savedTheme) {
+          // 如果有保存的主题，使用保存的主题
+          isDark = savedTheme === 'dark';
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          // 如果没有保存的主题，使用系统偏好
+          isDark = true;
+        }
+
+        // 立即应用主题到HTML元素
+        const html = document.documentElement;
+        if (isDark) {
+          html.classList.add('dark-mode');
+          html.setAttribute('data-theme', 'dark');
+        } else {
+          html.classList.remove('dark-mode');
+          html.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {
+        // 如果localStorage不可用（某些隐私模式），静默失败
+        console.warn('Failed to initialize theme:', e);
+      }
+    })();
+  </script>
 </head>
 
 <body>
+  <!-- Loading/Splash Screen - 在Vue应用挂载前显示 -->
+  <div id="app-loading">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">加载中...</div>
+  </div>
+
+  <!-- Vue应用挂载点 -->
   <div id="app"></div>
+
   <script type="module" src="/src/main.js"></script>
 </body>
 

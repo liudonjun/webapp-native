@@ -75,4 +75,19 @@ import { useThemeStore } from './stores/theme';
 const themeStore = useThemeStore();
 themeStore.initTheme();
 
+// 隐藏Loading/Splash Screen - 在应用完全加载后隐藏，防止首屏闪屏
+// 使用setTimeout确保Vue应用已经完全渲染
+setTimeout(() => {
+  const loadingElement = document.getElementById('app-loading');
+  if (loadingElement) {
+    loadingElement.classList.add('hidden');
+    // 在动画完成后移除元素，释放内存
+    setTimeout(() => {
+      if (loadingElement.parentNode) {
+        loadingElement.parentNode.removeChild(loadingElement);
+      }
+    }, 300); // 等待transition动画完成（0.3s）
+  }
+}, 100); // 给Vue应用100ms的渲染时间
+
 console.log('Vue App initialized');
